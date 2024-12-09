@@ -5,6 +5,7 @@ from sqlalchemy import text
 import logging
 from typing import List
 from pydantic import BaseModel
+import os
 
 from .config.database import get_db, engine, Base
 from .models.show import Show
@@ -55,7 +56,7 @@ async def update_shows(request: UpdateRequest, db: Session = Depends(get_db)):
                     })
                     continue
                 
-                logger.info(f"获取到��出数据: {shows}")
+                logger.info(f"获取到演出数据: {shows}")
                 
                 # 上传到数据库
                 try:
@@ -226,3 +227,8 @@ async def test_database(db: Session = Depends(get_db)):
             status_code=500,
             detail=error_msg
         ) 
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port) 
