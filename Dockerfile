@@ -22,9 +22,8 @@ RUN apt-get update && apt-get install -y \
 # 设置工作目录
 WORKDIR /app
 
-# 复制项目文件
-COPY requirements.txt .
-COPY app/ app/
+# 先复制整个项目目录
+COPY . .
 
 # 安装依赖
 RUN pip install --no-cache-dir -r requirements.txt
@@ -33,4 +32,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8000
 
 # 启动命令
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
