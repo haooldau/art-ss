@@ -6,10 +6,10 @@ import logging
 from typing import List
 from pydantic import BaseModel
 
-from .crawler.showstart_spider import ShowstartSpider
-from .services.upload_service import UploadService
 from .config.database import get_db, engine, Base
 from .models.show import Show
+from .crawler.showstart_spider import ShowstartSpider
+from .services.upload_service import UploadService
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -55,7 +55,7 @@ async def update_shows(request: UpdateRequest, db: Session = Depends(get_db)):
                     })
                     continue
                 
-                logger.info(f"获取到演出数据: {shows}")
+                logger.info(f"获取到��出数据: {shows}")
                 
                 # 上传到数据库
                 try:
