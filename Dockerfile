@@ -14,33 +14,24 @@ RUN apt-get update && apt-get install -y \
     chromium-driver \
     && rm -rf /var/lib/apt/lists/*
 
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1) \
-    && wget -q "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}" -O - | xargs -I{} wget -q "https://chromedriver.storage.googleapis.com/{}/chromedriver_linux64.zip" \
-    && unzip chromedriver_linux64.zip \
-    && mv chromedriver /usr/local/bin/ \
-    && chmod +x /usr/local/bin/chromedriver \
-    && rm chromedriver_linux64.zip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# 复制项目文件
+COPY . .
 
-# 设置工作目录
-WORKDIR /app
+# 创建数据目录
+RUN mkdir -p data/shows
 
-# 复制整个项目目录
-COPY . /app/
-
-# 列出目录内容以验证
-RUN ls -la /app && ls -la /app/app
-
-# 安装依赖
+# 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
+
+# 设置环境变量
+ENV PYTHONPATH=/app
+ENV HOST=0.0.0.0
+ENV PORT=8000
+ENV CHROME_DRIVER_PATH=/usr/bin/chromedriver
+ENV CHROME_PATH=/usr/bin/chromium
 
 # 暴露端口
 EXPOSE 8000
 
 # 启动命令
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--reload"] 
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] 
